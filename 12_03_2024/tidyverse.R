@@ -1,0 +1,182 @@
+##########PRAT(a)#####################################################################
+# Load the required libraries
+library(haven)
+library(dplyr)
+
+# Read the Stata dataset "childrenfinal.dta" into R
+data <- read_dta("childrenfinal.dta")
+
+# Select columns from the dataset based on specified conditions
+# Columns starting with "s", "v", or "m" are excluded from the selection
+selected_data <- data %>%
+  select(-matches("^s\\d+"), -matches("^v\\d+"), -matches("^m\\d+"))
+
+# Convert selected columns to appropriate data types
+# For example, 'adm2' is converted to character, 'hypage' to integer, and others to numeric
+selected_data <- selected_data %>%
+  mutate(adm2 = as.character(adm2),
+         hypage = as.integer(hypage),
+         ruralfacto = as.numeric(ruralfacto),
+         female = as.numeric(female),
+         zstunt = as.numeric(zstunt),
+         zweight = as.numeric(zweight),
+         zwast = as.numeric(zwast))
+
+###########PART(b)#######################################################################################
+# Selecting specific columns from the dataset
+selected_data <- select(selected_data, "hypage", "ruralfacto", "female", "zstunt", "zweight", "zwast", "adm2")
+
+# Converting the selected data to a tibble
+selected_data <- tibble(selected_data)
+
+# Loading the ggplot2 library
+library(ggplot2)
+
+# Scatter plot of Zstunt against Hypage with a trend line
+ggplot(selected_data, aes(x = hypage, y = zstunt)) +
+  geom_point() +  # Scatter plot points
+  geom_smooth(se = FALSE) +  # Add a linear regression line
+  geom_hline(yintercept = -2, linetype = "dashed", color = "red")+
+  labs(x = "Hypage", y = "Zstunt") +
+  ggtitle("Scatter Plot of Zstunt against Hypage with Trend Line")
+
+# Scatter plot with smooth lines for females and males
+ggplot(selected_data, aes(x = hypage, y = zstunt, color = factor(female))) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE) +
+  geom_hline(yintercept = -2, linetype = "dashed", color = "black")+
+  labs(x = "Hypage", y = "Zstunt", color = "Gender") +
+  scale_color_manual(values = c("blue", "red"), labels = c("Male", "Female")) +
+  ggtitle("Smooth Plots of Zstunt against Hypage for Females and Males") +
+  theme_minimal()
+
+# Scatter plot with smooth lines for urban and rural children
+ggplot(selected_data, aes(x = hypage, y = zstunt, color = factor(ruralfacto))) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE) +
+  geom_hline(yintercept = -2, linetype = "dashed", color = "red")+
+  labs(x = "Hypage", y = "Zstunt", color = "Residence") +
+  scale_color_manual(values = c("blue", "green"), labels = c("Urban", "Rural")) +
+  ggtitle("Smooth Plots of Zstunt against Hypage for Urban and Rural Children") +
+  theme_minimal()
+
+# Scatter plot of Zweight against Hypage with different aesthetics
+g <- ggplot(selected_data, aes(x = hypage, y = zweight, color = factor(ruralfacto), shape = factor(female))) +
+  geom_point(fill = "white", size = 3,alpha=0.5) +  # Use larger points
+  geom_hline(yintercept = -2, linetype = "dashed", color = "red")+
+ # geom_smooth(method = "lm", se = FALSE) +  # Add a linear regression line
+  scale_color_manual(values = c("red", "gray"), labels = c("Urban", "Rural")) +  # Custom color scale
+  scale_shape_manual(values = c(16, 17), labels = c("Male", "Female")) +  # Custom shape scale
+  labs(x = "Hypothetical Ages in Months", y = "Z-score Defined by Weights") +  # Custom axis labels
+  theme_minimal() +  # Use a minimal theme
+  theme(legend.text = element_text(size = 12),  # Adjust legend text size
+        legend.position = "bottom",  # Move legend to the bottom
+        plot.title = element_text(hjust = 0.5))  # Center plot title
+
+# Display the plot
+g
+
+# Writing the selected data to a file named "Data_for_Ex_09.txt" with tab-separated values
+write.table(selected_data, file = "Data_for_Ex_09.txt", sep = "\t", row.names = FALSE)
+
+#########PART(c)#################################################################################################
+# Load required libraries
+library(raster)
+library(plyr)
+library(dplyr)
+
+# Get administrative boundaries for Kenya at level 0 and 1
+Kenya <- getData("GADM", country = "KE", level = 0)
+Kenya1 <- getData("GADM", country = "KE", level = 1)
+
+# Transform Kenya1 to UTM projection
+Kenya1_UTM <- spTransform(Kenya1, CRS("+init=EPSG:32737"))
+
+# Extract county names from Kenya1_UTM
+NAME_1 <- Kenya1_UTM@data$NAME_1
+
+# Sample some data to associate with each admin level
+count <- sample(1:1000, 47)
+
+# Create a data frame with county names and associated data
+count_df <- data.frame(NAME_1, count)
+
+# Add an 'id' column to Kenya1_UTM data
+Kenya1_UTM@data$id <- rownames(Kenya1_UTM@data)
+
+# Join count_df with Kenya1_UTM data by 'NAME_1'
+Kenya1_UTM@data <- join(Kenya1_UTM@data, count_df, by = "NAME_1")
+
+# Convert Kenya1_UTM to a data frame
+Kenya1_df <- fortify(Kenya1_UTM)
+
+# Join Kenya1_df with Kenya1_UTM data by 'id'
+Kenya1_df <- join(Kenya1_df, Kenya1_UTM@data, by = "id")
+
+# Select required columns for latitude and longitude
+kenya_LOG_LAT <- dplyr::select(Kenya1_df, "long", "lat", "NAME_1", "group")
+
+# Calculate the mean value of 'zstunt' by 'adm2'
+mean_astuned <- aggregate(zstunt ~ adm2, data, mean, na.rm = TRUE)
+
+# Rename column for merging
+colnames(mean_astuned)[colnames(mean_astuned) == "adm2"] <- "NAME_1"
+
+# Convert county names to lowercase for merging
+mean_astuned$NAME_1 <- tolower(mean_astuned$NAME_1)
+kenya_LOG_LAT$NAME_1 <- tolower(kenya_LOG_LAT$NAME_1)
+
+# Handle mismatches in county names
+mean_astuned$NAME_1[mean_astuned$NAME_1 == "e. marakwet"] <- "elgeyo-marakwet"
+mean_astuned$NAME_1[mean_astuned$NAME_1 == "homa_bay"] <- "homa bay"
+mean_astuned$NAME_1[mean_astuned$NAME_1 == "muranga"] <- "murang'a"
+mean_astuned$NAME_1[mean_astuned$NAME_1 == "trans-nzoia"] <- "trans nzoia"
+mean_astuned$NAME_1[mean_astuned$NAME_1 == "nithi"] <- "tharaka-nithi"
+
+# Perform a right join operation
+df <- right_join(mean_astuned, kenya_LOG_LAT, by = "NAME_1")
+
+# Plot county areas colored by the mean value of 'zstunt'
+ggplot() + 
+  geom_polygon(data = df, aes(x = long, y = lat, group = group, fill = zstunt), color = "black", size = 0.25) +
+  theme(aspect.ratio = 1)
+
+# Get unique county names from 'NAME_1' column of df
+unique_counties <- unique(df$NAME_1)
+
+# Initialize a dataframe with an index, county names, and placeholders for centroid coordinates
+centroids <- data.frame(index = seq_along(unique_counties), county = unique_counties, centroid_long = NA, centroid_lat = NA)
+
+# Iterate over each unique county to calculate its centroid
+for (c in seq_along(unique_counties)) {
+  county_name <- unique_counties[c]  # Fetch the actual county name
+  subset_df <- df[df$NAME_1 == county_name, ]  # Create a subset of df for the current county
+  centroids[centroids$county == county_name, "centroid_long"] <- mean(subset_df$long, na.rm = TRUE)  # Calculate mean longitude
+  centroids[centroids$county == county_name, "centroid_lat"] <- mean(subset_df$lat, na.rm = TRUE)  # Calculate mean latitude
+}
+
+# Plot the map with county indices
+ggplot() + 
+  geom_polygon(data = df, aes(x = long, y = lat, group = group, fill = zstunt), color = "black", size = 0.25) +
+  geom_text(data = centroids, aes(x = centroid_long, y = centroid_lat, label = index), color = "white", size = 2, fontface = "bold") +
+  theme(aspect.ratio = 1,
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) 
+
+# Change column name for full join
+names(centroids)[names(centroids) == "county"] <- "NAME_1"
+
+# Perform a full join by column 'NAME_1'
+merged_data <- full_join(centroids, mean_astuned, by = "NAME_1")
+
+# Change column name for aesthetic purposes
+names(merged_data)[names(merged_data) == "NAME_1"] <- "county" 
+
+# Remove unnecessary columns
+table_with_counties_and_zstut <- subset(merged_data, select = -c(centroid_long, centroid_lat))
+
+
+# Write the table to a CSV file
+write.csv(table_with_counties_and_zstut, file = "table_with_counties_and_zstut.csv", row.names = FALSE)
+
+  
