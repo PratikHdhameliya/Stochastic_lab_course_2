@@ -1,0 +1,5 @@
+"Simulation","Cov_Prob_Variance","Cov_Prob_Median","Avg_Int_Length_Variance","Avg_Int_Length_Median","Estimated_z0","Estimated_a"
+"1000 bootstrap replicate of size 100",1,1,251.698454297611,4.78468080075326,NA,NA
+"1000 bootstrap replicate of size 1000",1,1,252.181411426067,4.765977978685,NA,NA
+"5000 bootstrap replicate of size 100",1,1,251.637111457502,4.77785724848629,NA,NA
+"Bias-corrected confidence intervals",0.299,0.998,3.99012603433377,3.88421979981884,1.71985744627401,0.00307406811213225
