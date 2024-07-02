@@ -1,0 +1,25 @@
+
+Call:
+glm(formula = G1 ~ ., family = poisson(link = "log"), data = data_model_3)
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   2.31120    0.07204  32.083  < 2e-16 ***
+sexM          0.07558    0.03296   2.293  0.02183 *  
+Fedu          0.04067    0.01477   2.753  0.00591 ** 
+studytime     0.05231    0.01935   2.704  0.00685 ** 
+failures     -0.14110    0.02488  -5.671 1.42e-08 ***
+schoolsupyes -0.20115    0.04985  -4.035 5.46e-05 ***
+famsupyes    -0.07447    0.03239  -2.299  0.02148 *  
+Walc         -0.02614    0.01274  -2.052  0.04016 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 402.47  on 394  degrees of freedom
+Residual deviance: 304.07  on 387  degrees of freedom
+AIC: 1977.2
+
+Number of Fisher Scoring iterations: 4
+

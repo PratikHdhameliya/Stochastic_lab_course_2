@@ -1,0 +1,57 @@
+
+Call:
+glm(formula = G1 ~ ., family = gaussian(link = "identity"), data = data_model_1)
+
+Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      11.375064   3.113004   3.654 0.000297 ***
+schoolMS          0.009965   0.549925   0.018 0.985553    
+sexM              0.894290   0.347385   2.574 0.010448 *  
+age              -0.070082   0.150905  -0.464 0.642639    
+addressU          0.150710   0.405805   0.371 0.710571    
+famsizeLE3        0.429175   0.339195   1.265 0.206602    
+PstatusT          0.154297   0.502913   0.307 0.759170    
+Medu              0.117943   0.224515   0.525 0.599688    
+Fedu              0.143774   0.192870   0.745 0.456496    
+Mjobhealth        0.926137   0.776837   1.192 0.233983    
+Mjobother        -0.782287   0.495455  -1.579 0.115244    
+Mjobservices      0.466532   0.554282   0.842 0.400529    
+Mjobteacher      -0.922790   0.721274  -1.279 0.201596    
+Fjobhealth       -0.553377   0.998994  -0.554 0.579973    
+Fjobother        -1.134849   0.710736  -1.597 0.111217    
+Fjobservices     -0.994008   0.734310  -1.354 0.176705    
+Fjobteacher       1.187017   0.900744   1.318 0.188414    
+reasonhome        0.165602   0.384744   0.430 0.667150    
+reasonother      -0.181207   0.567991  -0.319 0.749891    
+reasonreputation  0.444004   0.400557   1.108 0.268411    
+guardianmother    0.050219   0.379042   0.132 0.894673    
+guardianother     0.866380   0.694357   1.248 0.212947    
+traveltime       -0.025119   0.235489  -0.107 0.915112    
+studytime         0.604725   0.199842   3.026 0.002659 ** 
+failures         -1.314183   0.231280  -5.682 2.77e-08 ***
+schoolsupyes     -2.155394   0.463335  -4.652 4.65e-06 ***
+famsupyes        -0.978681   0.332560  -2.943 0.003466 ** 
+paidyes          -0.102389   0.331906  -0.308 0.757892    
+activitiesyes    -0.052728   0.309114  -0.171 0.864652    
+nurseryyes        0.029587   0.381623   0.078 0.938245    
+higheryes         1.140610   0.748777   1.523 0.128575    
+internetyes       0.255412   0.430423   0.593 0.553293    
+romanticyes      -0.211223   0.326001  -0.648 0.517455    
+famrel            0.025733   0.170852   0.151 0.880363    
+freetime          0.254817   0.164896   1.545 0.123161    
+goout            -0.413594   0.155971  -2.652 0.008367 ** 
+Dalc             -0.063146   0.229869  -0.275 0.783703    
+Walc             -0.025339   0.172300  -0.147 0.883164    
+health           -0.167531   0.111859  -1.498 0.135102    
+absences          0.012277   0.020124   0.610 0.542204    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for gaussian family taken to be 8.144982)
+
+    Null deviance: 4340.7  on 394  degrees of freedom
+Residual deviance: 2891.5  on 355  degrees of freedom
+AIC: 1989.3
+
+Number of Fisher Scoring iterations: 2
+

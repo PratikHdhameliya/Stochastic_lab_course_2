@@ -1,16 +1,17 @@
-# This function creates train and test datasets from a given dataset based on specified indices.
-# Arguments:
-#   dataset: The original dataset from which to create train and test sets.
-#   indices: A vector of indices specifying which rows of the dataset belong to the train set.
-# Returns:
-#   A list containing the train and test datasets.
-create_train_test_datasets <- function(dataset, indices) {
-  # Extract the train set using the specified indices
-  train_set <- dataset[indices]
+# Define the normalize_datasets function
+normalize_datasets <- function(train_set, test_set) {
+  # Compute mean and standard deviation of the train set
+  train_mean <- mean(train_set)
+  train_sd <- sd(train_set)
+  test_mean <- mean(test_set)
+  test_sd <- sd(test_set)
   
-  # Extract the test set using the remaining indices
-  test_set <- dataset[-indices]
+  # Apply normalization to train set
+  normalized_train_set <- scale(train_set, center = train_mean, scale = train_sd)
   
-  # Return the train and test sets as a list
-  return(list(train_set = train_set, test_set = test_set))
+  # Apply the same transformation to the test set
+  normalized_test_set <- scale(test_set, center = test_mean, scale = test_sd)
+  
+  # Return both normalized datasets
+  return(list(normalized_train_set = normalized_train_set, normalized_test_set = normalized_test_set))
 }
