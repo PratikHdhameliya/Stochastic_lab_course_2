@@ -63,7 +63,7 @@ run_adaptive_lasso_CV <- function(beta_true) {
 result_CV<-run_adaptive_lasso_CV(beta_true)
 lambda_CV<-mean(result_CV$lambda_min)
 ggplot(result_CV, aes(x = lambda_min, y = cv_error)) +
-  geom_line() +
+  geom_smooth(method = "loess", se = FALSE) +
   labs(x = "Lambda", y = "CV Error", title = "Lambda vs CV Error")
 
 
@@ -103,7 +103,7 @@ run_DEoptim_BIC <- function(X, y, control_params, iterations = 1000) {
 results_BIC <- run_DEoptim_BIC(X, y, control_params = DEoptim.control(itermax = 100, F = 0.05, CR = 0.09),iterations = 1000)
 lambda_BIC<-mean(results_BIC$lambda_min)
 ggplot(results_BIC, aes(x = lambda_min, y = BIC_error)) +
-  geom_line() +
+  geom_smooth(method = "loess", se = FALSE) +
   labs(x = "Lambda", y = "BIC Error", title = "Lambda vs BIC Error")
 
 
@@ -130,7 +130,7 @@ ols_coef <- coef(ols_fit)
 result_CV_new_Beta<-run_adaptive_lasso_CV(beta_true)
 lambda_CV_new_Beta<-mean(result_CV_new_Beta$lambda_min)
 ggplot(result_CV_new_Beta, aes(x = lambda_min, y = cv_error)) +
-  geom_line() +
+  geom_smooth(method = "loess", se = FALSE) +
   labs(x = "Lambda", y = "CV Error", title = "Lambda vs CV Error for another Beta")
 
 
@@ -138,7 +138,7 @@ ggplot(result_CV_new_Beta, aes(x = lambda_min, y = cv_error)) +
 results_BIC_new_Beta <- run_DEoptim_BIC(X, y, control_params = DEoptim.control(itermax = 100, F = 0.05, CR = 0.09),iterations = 1000)
 lambda_BIC_new_Beta<-mean(results_BIC_new_Beta$lambda_min)
 ggplot(results_BIC_new_Beta, aes(x = lambda_min, y = BIC_error)) +
-  geom_line() +
+  geom_smooth(method = "loess", se = FALSE) +
   labs(x = "Lambda", y = "BIC Error", title = "Lambda vs BIC Error for another Beta")
 
 
