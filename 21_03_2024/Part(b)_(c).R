@@ -70,8 +70,13 @@ for (i in 1:4) {
   plot_data_gcv[[paste0("Degree_", degrees[i])]] <- sapply(plot_data_gcv$ages, function(age) fit_function(age)[[1]])
 }
 
+plot_data_gcv <- pivot_longer(plot_data_gcv, 
+                                           cols = starts_with("Degree_"), 
+                                           names_to = "Degree_", 
+                                           values_to = "Value")
+
 # Plot GCV-optimal bandwidths
-ggplot(data = plot_data_gcv, aes(x = ages, y = value, color = variable)) +
+ggplot(data = plot_data_gcv, aes(x = ages, y = Value, color = Degree_)) +
   geom_line(linewidth = 0.8) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +  
   labs(title = "GCV-optimal bandwidths with four degrees", x = "Age", y = "Intercept")
@@ -89,8 +94,14 @@ for (i in 1:4) {
   plot_data_first_derivative[[paste0("Degree_", degrees[i])]] <- sapply(plot_data_first_derivative$ages, function(age) fit_function(age)[[1]])
 }
 
+
+plot_data_first_derivative <- pivot_longer(plot_data_first_derivative, 
+                               cols = starts_with("Degree_"), 
+                               names_to = "Degree_", 
+                               values_to = "Value")
 # Plot first derivative with respect to four degrees
-ggplot(data = plot_data_first_derivative, aes(x = ages, y = value, color = variable)) +
+
+ggplot(data = plot_data_first_derivative, aes(x = ages, y = Value, color = Degree_)) +
   geom_line(linewidth = 0.8) + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +  
   labs(title = "First derivative with respect to four degrees", x = "Age", y = "First derivative")

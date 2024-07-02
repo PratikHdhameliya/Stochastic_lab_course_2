@@ -7,7 +7,7 @@ library(dplyr)
 data <- read_csv("student-mat.csv")
 
 # Define a function to plot density plot and Poisson PMF comparison
-plot_density_and_poisson <- function(data, G1, dataset_name, means) {
+plot_density_and_poisson <- function(data, G1, title, xlabal) {
   # Calculate density of the data for G1
   density_data <- density(data[[G1]])
   # Calculate mean value of the data for G1
@@ -21,8 +21,8 @@ plot_density_and_poisson <- function(data, G1, dataset_name, means) {
   ggplot() +
     geom_density(data = data, aes_string(x = G1), fill = "skyblue", color = "blue") +
     geom_line(data = poisson_pmf, aes(x = x, y = pmf), color = "red", size = 1) +
-    labs(title = paste("Distribution of", dataset_name, " and Poisson PMF Comparison "),
-         x = paste("Data points of ", means), y = "Density/Probability") +
+    labs(title = paste("Distribution of", title, " and Poisson PMF Comparison "),
+         x = paste("Data points of ", xlabal), y = "Density/Probability") +
     scale_y_continuous(sec.axis = sec_axis(~. * length(data[[G1]]), name = "Poisson PMF")) +
     theme_minimal()
 }
@@ -201,6 +201,7 @@ model_3_poisson <- glm(G1 ~ ., family = poisson(link = "log"), data = data_model
 
 # Capture the summary of Model 3 as text
 model_3_summary <- capture.output(summary(model_3_poisson))
+summary(model_3_poisson)
 
 # Write the model summary to a text file
 writeLines(model_3_summary, "model_3_summary.txt")
